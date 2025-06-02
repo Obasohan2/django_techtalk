@@ -1,1 +1,1 @@
-web: gunicorn techtalk.wsgi
+web: gunicorn techtalk.wsgi:application

@@ -20,7 +20,6 @@ if os.path.isfile('env.py'):
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -30,8 +29,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['django-techtalk-9412062b9dbd.herokuapp.com', '127.0.0.1', 'localhost:8000']
-
+ALLOWED_HOSTS = ['django-techtalk-9412062b9dbd.herokuapp.com', '127.0.0.1']
 
 # Application definition
 
