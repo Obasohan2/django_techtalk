@@ -3,9 +3,14 @@ from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
 
 
-class Community(models.Model):
-    name = models.CharField(max_length=100)
-
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name_plural = "Categories"
+    
     def __str__(self):
         return self.name
 
@@ -22,7 +27,6 @@ class Post(models.Model):
     caption = models.CharField(max_length=200, blank=True, null=True)
     excerpt = models.TextField(blank=True, null=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='blog_posts')
     status = models.IntegerField(choices=STATUS, default=0)
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     
@@ -50,4 +54,4 @@ class Comment(models.Model):
         ordering = ["created_on"]
 
     def __str__(self):
-        return f"Comment {self.body} by {self.name}"
+        return f'Comment by {self.author.username} on {self.post.title}'

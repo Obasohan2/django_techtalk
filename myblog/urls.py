@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import HomeView, PostDetailView, LikePostView, CommunityView
-
+from . import views
 
 urlpatterns = [
-    path('', HomeView.as_view(), name='home'),
-    path('post/<int:pk>/', PostDetailView.as_view(), name='post_detail'),
-    path('post/<int:pk>/like/', LikePostView.as_view(), name='like_post'),
-    path('community/<str:community_name>/', CommunityView.as_view(), name='community_view'),
+    path('', views.home, name='home'),
+    path('post/<int:pk>/', views.post_detail, name='post_detail'),
+    path('create/', views.create_post, name='create_post'),
+    path('like/', views.like_post, name='like_post'),
 ]
