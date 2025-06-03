@@ -1,0 +1,21 @@
+<h2>{{ post.title }}</h2>
+<p>{{ post.content }}</p>
+<p>Posted by {{ post.author }} on {{ post.created_at }}</p>
+<p>Category: {{ post.category }}</p>
+<img src="{{ post.image.url }}" alt="" width="300">
+<p>
+  <a href="{% url 'like_post' post.pk %}">
+    {% if user in post.likes.all %}
+      Unlike
+    {% else %}
+      Like
+    {% endif %}
+  </a>
+  | {{ post.total_likes }} Likes
+</p>
+
+<h3>Comments</h3>
+{% for comment in comments %}
+  <p>{{ comment.content }} — {{ comment.author }} ({{ comment.created_at }})</p>
+{% endfor %}
+<a href="{% url 'add_comment' post.pk %}">Add Comment</a>

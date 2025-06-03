@@ -3,11 +3,6 @@ from .models import Post, Category, Comment
 from django_summernote.admin import SummernoteModelAdmin
 
 
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name']
-
-
 @admin.register(Post)
 class PostAdmin(SummernoteModelAdmin):
 
@@ -29,7 +24,7 @@ class CommentAdmin(admin.ModelAdmin):
         queryset.update(approved=True)
 
 
-# @admin.register(Category)
-# class CategoryAdmin(admin.ModelAdmin):
-#     list_display = ('id', 'name')  # Customize as needed
-#     search_fields = ('name',)
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name')  # Customize as needed
+    search_fields = ('name',)
