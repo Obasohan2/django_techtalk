@@ -49,9 +49,20 @@ class Comment(models.Model):
     body = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
     approved = models.BooleanField(default=False)
-
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
+    
     class Meta:
         ordering = ['created_on']
 
     def __str__(self):
-        return f'Comment by {self.author.username if self.author else self.name} on {self.post.title}'
+        return f"Comment by {self.author} on {self.post}"
+     
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    image = CloudinaryField('image', blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+

@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic.edit import CreateView
+from django.views.generic import CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.models import User
 
@@ -66,11 +66,16 @@ def post_detail(request, pk):
             messages.error(request, 'Please login to comment.')
     else:
         comment_form = CommentForm()
-
+        
+        has_liked = False
+    if request.user.is_authenticated:
+        has_liked = post.likes.filter(id=request.user.id).exists()
+        
     return render(request, 'myblog/post_detail.html', {
         'post': post,
         'comments': comments,
         'comment_form': comment_form,
+        'has_liked': has_liked,
     })
 
 @login_required
@@ -108,6 +113,13 @@ def create_post(request):
     return render(request, 'myblog/create_post.html', {'form': form})
 
 
+class PostCreateView(CreateView):
+    model = Post
+    fields = ['title', 'content', 'category', 'image']  # Or your model fields
+    template_name = 'myblog/post_form.html'
+    success_url = reverse_lazy('home')  # Or wherever you want to redirect
+
+
 @login_required
 def like_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -128,6 +140,26 @@ def like_post(request, pk):
     return redirect('post_detail', pk=post.pk)
 
 
+@login_required
+def toggle_like(request):
+    if request.method == "POST":
+        post_id = request.POST.get("post_id")
+        post = Post.objects.get(id=post_id)
+
+        liked = False
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+            liked = True
+
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': post.total_likes(),
+        })
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
 def category_posts(request, category_name):
     category = get_object_or_404(Category, name=category_name)
     posts_list = Post.objects.filter(category=category).order_by('-created_on')
@@ -142,8 +174,46 @@ def category_posts(request, category_name):
         'categories': Category.objects.all(),
     })
 
+
 class SignUpView(CreateView):
     model = User
     form_class = UserCreationForm
     template_name = 'registration/signup.html'
     success_url = reverse_lazy('login')
+
+
+def user_profile(request, username):
+    user = get_object_or_404(User, username=username)
+    posts_list = user.post_set.all().order_by('-created_on')
+
+    paginator = Paginator(posts_list, 5)
+    page = request.GET.get('page')
+    posts = paginator.get_page(page)
+
+    return render(request, 'myblog/user_profile.html', {
+        'profile_user': user,
+        'posts': posts,
+    })
+
+
+def view_profile_by_username(request, username):
+    user = get_object_or_404(User, username=username)
+    return render(request, 'myblog/view_profile.html', {'profile_user': user})
+
+
+@login_required
+def edit_profile(request, username):
+    if request.user.username != username:
+        return HttpResponseForbidden("You are not allowed to edit this profile.")
+
+    user = User.objects.get(username=username)
+
+    if request.method == 'POST':
+        # Example of handling form submission
+        user.first_name = request.POST.get('first_name', '')
+        user.last_name = request.POST.get('last_name', '')
+        user.email = request.POST.get('email', '')
+        user.save()
+        return redirect('view_profile', username=username)
+
+    return render(request, 'myblog/edit_profile.html', {'user': user})

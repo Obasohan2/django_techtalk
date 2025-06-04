@@ -1,5 +1,11 @@
-{% for post in posts %}
-  <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-  <p>{{ post.created_at }} | Category: {{ post.category }}</p>
-  <p>By {{ post.author }} | {{ post.total_likes }} likes</p>
-{% endfor %}
+{% extends "blog/base.html" %}
+{% block title %}Create Post | TechTalk{% endblock %}
+
+{% block content %}
+<h2>Create New Post</h2>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Publish</button>
+</form>
+{% endblock %}

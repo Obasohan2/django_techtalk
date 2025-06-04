@@ -22,9 +22,15 @@ class CommentAdmin(admin.ModelAdmin):
 
     def approve_comments(self, request, queryset):
         queryset.update(approved=True)
-
+        
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name')  # Customize as needed
-    search_fields = ('name',)
+    list_display = ['name', 'description', 'created_on']
+    search_fields = ['name']
+
+
+# @admin.register(Category)
+# class CategoryAdmin(admin.ModelAdmin):
+#     list_display = ('id', 'name')  # Customize as needed
+#     search_fields = ('name',)

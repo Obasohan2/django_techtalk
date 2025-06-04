@@ -1,5 +1,25 @@
-{% for post in posts %}
-  <h2><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></h2>
-  <p>{{ post.created_at }} | Category: {{ post.category }}</p>
-  <p>By {{ post.author }} | {{ post.total_likes }} likes</p>
-{% endfor %}
+{% extends 'myblog/base.html' %}
+{% block title %}Home | TechTalk{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Latest Posts</h2>
+
+{% if posts %}
+    <div class="row">
+        {% for post in posts %}
+        <div class="col-md-12 mb-3">
+            <div class="card post-card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <h6 class="card-subtitle text-muted">by {{ post.author }} | {{ post.created_on|date:"F j, Y" }}</h6>
+                    <p class="card-text mt-2">{{ post.content|truncatechars:150 }}</p>
+                    <a href="{% url 'post_detail' post.pk %}" class="btn btn-sm btn-outline-primary">Read more</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No posts yet.</p>
+{% endif %}
+{% endblock %}
