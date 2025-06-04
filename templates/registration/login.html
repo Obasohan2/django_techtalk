@@ -1,0 +1,34 @@
+{% extends "myblog/base.html" %}
+{% load static %}
+
+{% block title %}Login - MySite{% endblock %}
+
+{% block content %}
+<h2>Login</h2>
+
+{% if form.errors %}
+    <p style="color:red;">Invalid username or password. Please try again.</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    {# Prefer individual fields if available, otherwise fallback to form.as_p #}
+    {% if form.username and form.password %}
+        <div>
+            <label for="id_username">Username:</label>
+            {{ form.username }}
+        </div>
+        <div>
+            <label for="id_password">Password:</label>
+            {{ form.password }}
+        </div>
+    {% else %}
+        {{ form.as_p }}
+    {% endif %}
+
+    <button type="submit">Login</button>
+</form>
+
+<p>Don't have an account? <a href="{% url 'signup' %}">Sign up here</a>.</p>
+{% endblock %}

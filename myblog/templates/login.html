@@ -1,0 +1,28 @@
+{% extends 'myblog/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+   <div class="col-md-6">
+       <div class="card">
+           <div class="card-header text-center">
+               <h3><i class="fas fa-sign-in-alt"></i> Login to TechTalk</h3>
+           </div>
+           <div class="card-body">
+               <form method="post">
+                   {% csrf_token %}
+                   {{ form.as_p }}
+                   <button type="submit" class="btn btn-primary w-100">
+                       <i class="fas fa-sign-in-alt"></i> Login
+                   </button>
+               </form>
+               
+               <div class="text-center mt-3">
+                   <small class="text-muted">
+                       Don't have an account? Contact admin to create one.
+                   </small>
+               </div>
+           </div>
+       </div>
+   </div>
+</div>
+{% endblock %}

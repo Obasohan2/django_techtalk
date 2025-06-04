@@ -1,6 +1,22 @@
 from django.db import models
 from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
+import bleach
+
+ALLOWED_TAGS = [
+    'p', 'b', 'i', 'u', 'em', 'strong', 'a', 'ul', 'ol', 'li', 'br', 'span',
+    'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'code', 'pre', 'img',
+]
+ALLOWED_ATTRIBUTES = {
+    '*': ['style', 'class'],
+    'a': ['href', 'title', 'target', 'rel'],
+    'img': ['src', 'alt', 'width', 'height'],
+}
+
+
+def clean_content(content):
+    return bleach.clean(content, tags=ALLOWED_TAGS, attributes=ALLOWED_ATTRIBUTES, strip=True)
+
 
 STATUS = ((0, "Draft"), (1, "Published"))
 
@@ -39,6 +55,10 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def save(self, *args, **kwargs):
+        self.content = clean_content(self.content)
+        super().save(*args, **kwargs)
 
 
 class Comment(models.Model):

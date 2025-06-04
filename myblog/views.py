@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
@@ -77,6 +78,7 @@ def post_detail(request, pk):
         'comment_form': comment_form,
         'has_liked': has_liked,
     })
+
 
 @login_required
 def add_comment(request, pk):
@@ -206,10 +208,9 @@ def edit_profile(request, username):
     if request.user.username != username:
         return HttpResponseForbidden("You are not allowed to edit this profile.")
 
-    user = User.objects.get(username=username)
+    user = get_object_or_404(User, username=username)
 
     if request.method == 'POST':
-        # Example of handling form submission
         user.first_name = request.POST.get('first_name', '')
         user.last_name = request.POST.get('last_name', '')
         user.email = request.POST.get('email', '')
